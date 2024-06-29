@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace Zapper
 {
@@ -12,25 +12,17 @@ namespace Zapper
         /// <returns>File content.</returns>
         public static string ReadSettingsFromFile()
         {
-            StringBuilder fileDetails = new();
-
             try
             {
-                using StreamReader sr = new(_fileName);
-                string line = sr.ReadLine();
+                byte[] userSettingsSaved = File.ReadAllBytes(_fileName);
+                string userSettings = Encoding.UTF8.GetString(userSettingsSaved);
 
-                while(line != null)
-                {
-                    fileDetails.AppendLine(line);
-                    line = sr.ReadLine();
-                }
+                return userSettings;
             }
             catch (Exception)
             {
                 throw;
             }
-
-            return fileDetails.ToString();
         }
 
         /// <summary>
@@ -41,9 +33,8 @@ namespace Zapper
         {
             try
             {
-                FileStream fileStream = new(_fileName, FileMode.Append, FileAccess.Write);
-                using StreamWriter writer = new(fileStream);
-                writer.WriteLine(settings);
+                using BinaryWriter writer = new(File.Open(_fileName, FileMode.Append));
+                writer.Write(settings);
             }
             catch (Exception)
             {
